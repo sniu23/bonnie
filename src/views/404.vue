@@ -4,7 +4,7 @@
   <el-card class="item-card" style="">
     <i class="el-icon-x-404"></i>
     <el-alert type="error" :closable="false"
-      :title="$t('message.notfound')" show-icon>
+      :title="notfound" show-icon>
     </el-alert>
     <router-link to="/dashboard">
       <el-button type="info" plain size="medium">返回首页</el-button>
@@ -16,11 +16,11 @@
 
 <script>
 export default {
-  // data: function() {
-  //   return {
-  //     notfound: '未找到该页！'
-  //   }
-  // }
+  data: function() {
+    return {
+      notfound: '未找到该页！'
+    }
+  }
 }
 </script>
 

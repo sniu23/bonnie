@@ -2,10 +2,10 @@
 <section class="box-top">
   <el-form :model="formSign" label-position="top" class="box-login" size="medium">
     <div class="title-website">{{title}}</div>
-    <el-form-item label="用户名">
+    <el-form-item label="用户名" prop="no">
       <el-input v-model="formSign.no" placeholder="demo"></el-input>
     </el-form-item>
-    <el-form-item label="密码">
+    <el-form-item label="密码" prop="password">
       <el-input v-model="formSign.password" placeholder="demo"></el-input>
     </el-form-item>
     <el-form-item>
@@ -21,6 +21,8 @@
 
 <script>
 import { mapState } from 'vuex'
+import { validate } from '@/utils/validator'
+import { loginRule } from '@/rules/user'
 
 export default {
   data: function() {
@@ -39,9 +41,12 @@ export default {
   },
   methods: {
     async handlerSignIn() {
-      await this.$store.dispatch('LOGIN', this.formSign)
-      if (this.user) {
-        this.$router.push({ path: '/dashboard' })
+      const valid = await validate(loginRule, this.formSign)
+      if (valid) {
+        await this.$store.dispatch('LOGIN', this.formSign)
+        if (this.user) {
+          this.$router.push({ path: '/dashboard' })
+        }
       }
     }
   }
@@ -61,7 +66,7 @@ export default {
   height: 100vh;
   .box-login {
     background-color: $color-border-1;
-    width: 320px;
+    width: 360px;
     border: 1px solid $color-border1;
     padding: 16px;
     box-shadow: 0 0 8px $color-border;
@@ -76,6 +81,7 @@ export default {
   }
   .el-alert {
     width: 320px;
+    margin-bottom: 240px;
   }
 }
 

@@ -23,17 +23,15 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use(
   response => {
     const res = response.data
-    if (res.success) {
-      return response.data
-    } else {
+    if (!res.success) {
       Message({
         message: res.message || 'catched unknown exception !',
         type: 'warning',
         duration: 5 * 1000
       })
-      // return Promise.reject('error')
-      return response.data
     }
+    // return Promise.reject('error')
+    return response.data
   },
   error => {
     // console.log('err' + error) // for debug
@@ -44,7 +42,7 @@ service.interceptors.response.use(
       duration: 0
     })
     // return Promise.reject(error)
-    return error
+    // return error
   }
 )
 

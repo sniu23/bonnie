@@ -74,19 +74,19 @@
     </div>
     <!--修改密码-->
     <el-dialog title="修改密码" :visible.sync="passwordVisible">
-      <el-form :model="formPwd" label-width="120px">
-        <el-form-item label="老密码">
-          <el-input v-model="formPwd.oldPwd" auto-complete="off"></el-input>
+      <el-form :model="formPwd" label-width="120px" ref="formPwd">
+        <el-form-item label="老密码" prop="oldPwd">
+          <el-input type="password" v-model="formPwd.oldPwd" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="新密码">
-          <el-input v-model="formPwd.newPwd" auto-complete="off"></el-input>
+        <el-form-item label="新密码" prop="newPwd">
+          <el-input type="password" v-model="formPwd.newPwd" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="重复新密码">
-          <el-input v-model="formPwd.cfmPwd" auto-complete="off"></el-input>
+        <el-form-item label="重复新密码" prop="cfmPwd">
+          <el-input type="password" v-model="formPwd.cfmPwd" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="passwordVisible = false">取 消</el-button>
+        <el-button @click="handleChangePwdCancel">取 消</el-button>
         <el-button type="primary" @click="handleChangePwd">确 定</el-button>
       </div>
     </el-dialog>
@@ -97,6 +97,8 @@
 <script>
 import { mapState } from 'vuex'
 import { changePwd } from '@/api/user'
+import { validate } from '@/utils/validator'
+import { changePwdRule } from '@/rules/user'
 
 export default {
   name: 'layout',
@@ -188,18 +190,23 @@ export default {
       this.$router.push({ path: tab.name })
     },
     async handleChangePwd() {
-      const { success, message } = await changePwd({
-        no: this.$data.user.no,
-        oldpwd: this.formPwd.oldPwd,
-        newpwd: this.formPwd.newPwd
-      })
-      this.formPwd.oldPwd = ''
-      this.formPwd.newPwd = ''
-      this.formPwd.cfmPwd = ''
-      if (success) {
-        this.$data.passwordVisible = false
-        this.$message.success(message)
+      const valid = await validate(changePwdRule, this.formPwd, { first: true })
+      if (valid) {
+        const { success, message } = await changePwd({
+          no: this.user.no || '',
+          oldpwd: this.formPwd.oldPwd,
+          newpwd: this.formPwd.newPwd
+        })
+        this.$refs['formPwd'].resetFields()
+        if (success) {
+          this.$data.passwordVisible = false
+          this.$message.success(message)
+        }
       }
+    },
+    handleChangePwdCancel() {
+      this.$refs['formPwd'].resetFields()
+      this.$data.passwordVisible = false
     },
     async handleLogOut() {
       this.$router.push({ path: '/login' })

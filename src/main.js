@@ -7,8 +7,8 @@ import store from './store'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 
-// import '@/icons' // icon
 // import axios from './utils/axios'
+// Vue.prototype.$ajax = axios;
 
 // if (__DEV__) {
 //   require('./mock/index.js')
@@ -37,8 +37,6 @@ router.beforeEach((to, from, next) => {
 router.afterEach(() => {
   NProgress.done() // 结束Progress
 })
-
-// Vue.prototype.$ajax = axios;
 
 new Vue({
   el: '#app',
