@@ -33,8 +33,6 @@ const user = {
       if (success) {
         context.commit('SET_USER', data)
       }
-      // if (success) {
-      // }
     },
     async LOGOUT(context) {
       const { success } = await logout()

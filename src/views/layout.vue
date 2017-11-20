@@ -19,7 +19,7 @@
       </div>
     </el-card>
     <!--菜单-->
-    <el-menu unique-opened text-color="#2D2F33" router :collapse="menuCollapsed">
+    <el-menu unique-opened text-color="#2D2F33" router :collapse="menuCollapsed" :default-active="currTab" >
       <li v-for="r1 in children('/')" :key="r1.path" 
         :is="r1.isLeaf ? 'el-menu-item' : 'el-submenu' "
         :index="r1.path">
