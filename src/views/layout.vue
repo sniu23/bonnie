@@ -288,7 +288,8 @@ export default {
       border-style: solid;
       border-color:$color-border;
       border-width: 0 1px 1px 1px;
-      padding: $size-text/2 $size-text;  
+      padding: $size-text;
+      min-height: 93vh;
     }
   }
 }
