@@ -1,5 +1,6 @@
 <template>
-<section class="box-top">
+<section class="box-flex">
+  <div class="top"></div>
   <el-form :model="formSign" label-position="top" class="box-login" size="medium">
     <div class="title-website">{{title}}</div>
     <el-form-item label="用户名" prop="no">
@@ -12,10 +13,16 @@
       <el-button type="primary" size="medium" @click="handlerSignIn" style="width: 100%">登录</el-button>
     </el-form-item>
   </el-form>
-  <el-alert type="info"
-    title="推荐使用chrome、firefox等现代浏览器。"
-    :closable="false" center show-icon>
-  </el-alert>
+    <el-alert type="error" class="explorer" 
+      title="推荐使用chrome、firefox等现代浏览器。"
+      :closable="false" center show-icon>
+    </el-alert>
+
+    <el-alert type="info" class="copyright"
+      title="Copyright 2017 XX技术部出品"
+      :closable="false" center>
+    </el-alert>
+
 </section>
 </template>
 
@@ -56,35 +63,39 @@ export default {
 <style lang="scss" scoped>
 @import 'src/styles/vars.scss';
 
-.box-top {
+.box-flex {
 	background-image: url(../assets/rebc.gif);
 	background-color: #f5f5f5;
   display:flex; 
   flex-direction: column;
+  justify-content: space-between;
   align-items:center;
-  justify-content:center;
   height: 100vh;
+  padding: 0;
+  margin: 0;
   .box-login {
     background-color: $color-border-1;
     width: 360px;
     border: 1px solid $color-border1;
     padding: 16px;
     box-shadow: 0 0 8px $color-border;
-    margin: 0 0 40px 0;
+    margin: 120px 0 120px 0;
     .title-website {
       text-align: center;
       color: $color-blue;
       font-size: $size-title;
       font-weight: bolder;
-      margin: 24px 0 ;
+      margin: 24px 0;
     }
   }
-  .el-alert {
+  .explorer {
     width: 320px;
-    margin-bottom: 240px;
+    margin: 0 0 80px 0;
+  }
+  .copyright {
+    height: 80px;
   }
 }
-
 
 </style>
 

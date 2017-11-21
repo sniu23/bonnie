@@ -1,17 +1,22 @@
 <template>
-<div class="flex-box">
-
-  <el-card class="item-card" style="">
-    <i class="el-icon-x-404"></i>
-    <el-alert type="error" :closable="false"
-      :title="notfound" show-icon>
-    </el-alert>
-    <router-link to="/dashboard">
-      <el-button type="info" plain size="medium">返回首页</el-button>
-    </router-link>
-  </el-card>
-
-</div>
+<section class="flex-column">
+  <div class="top"></div>
+  <section class="flex-row">
+    <div class="box left">
+      <i class="el-icon-x-404"></i>
+    </div>
+    <div class="box right">
+      <h2>{{notfound}}</h2>
+      <router-link to="/dashboard">
+        <el-button type="primary" plain size="medium">返回首页</el-button>
+      </router-link>
+    </div>
+  </section>
+  <el-alert type="info" class="copyright"
+    title="Copyright 2017 XX技术部出品"
+    :closable="false" center>
+  </el-alert>
+</section>
 </template>
 
 <script>
@@ -24,32 +29,43 @@ export default {
 }
 </script>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
 @import '../assets/icon/iconfont.css';
 
-.flex-box {
+.flex-column {
+  background-image: url(../assets/rebc.gif);
+	background-color: #f5f5f5;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items:center;
   height: 100vh;
-  .item-card {
-  background-color: #EDF2FC;
-    box-sizing: border-box;
-    width: 600px;
-    min-height: 300px;
-    margin: 0 0 240px 0;
-    text-align: center;
+  .flex-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items:center;
+    width: 100%;
+    flex-wrap: wrap;
+    .box {
+      width: 360px;
+      margin: 20px 12px 60px 0;
       .el-icon-x-404 {
         margin: 48px 0;
-        font-size: 80px;
+        font-size: 120px;
+        font-weight: bold;
         color: #409EFF;
       }
-      .el-alert {
-        margin: 16px 0;
+      .left {
+        text-align: center;
       }
-      .el-button {
-        margin: 16px 0;
+      .right {
+        text-align: left;
       }
+    }
+  }
+  .copyright {
+    height: 80px;
   }
 }
 </style>
