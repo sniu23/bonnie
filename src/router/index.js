@@ -10,7 +10,7 @@ import { userMap } from './userMap'
 Vue.use(Router)
 
 export const constantRouterMap = [
-  { path: '/login', name: '登录', component: _import('login') },
+  { path: '/login', component: _import('login') },
   { path: '/404', component: _import('404') },
   {
     path: '/',

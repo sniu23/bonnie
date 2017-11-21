@@ -3,7 +3,6 @@
   <el-tabs value="first">
     <el-tab-pane label="单头信息" name="first">
       <el-form :model="formHead" ref="formHead" label-width="80px" inline label-suffix=":">
-        <br/>
         <el-form-item label="帐号" prop="no">
           <span>{{formHead.no}}</span>
         </el-form-item>
@@ -19,7 +18,7 @@
         <el-form-item label="状态" prop="status">
           <span>{{formHead.status}}</span>
         </el-form-item>
-        <br/>
+        </br>
         <el-form-item>
           <el-button type="primary" @click="submitForm('formHead')">复制单头</el-button>
         </el-form-item>

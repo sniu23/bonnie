@@ -123,20 +123,20 @@ export default {
       user: state => state.user.user,
       title: state => state.app.title,
       uris: state => state.user.uris
-    }),
-    root: function() {
-      let home
-      this.$router.options.routes.forEach(function(item) {
-        if (item.path === '/') {
-          home = item.children
-        }
-      })
-      const allowed = this.uris
-      const root = home.filter(function(item) {
-        return allowed.indexOf(item.path) >= 0
-      })
-      return root
-    }
+    })
+    // root: function() {
+    //   let home
+    //   this.$router.options.routes.forEach(function(item) {
+    //     if (item.path === '/') {
+    //       home = item.children
+    //     }
+    //   })
+    //   const allowed = this.uris
+    //   const root = home.filter(function(item) {
+    //     return allowed.indexOf(item.path) >= 0
+    //   })
+    //   return root
+    // }
   },
   mounted: async function() {
     // this.$data.user = JSON.parse(sessionStorage.getItem('user'))
@@ -147,7 +147,8 @@ export default {
   },
   methods: {
     children: function(fatherName) {
-      const children = this.root.filter(function(item) {
+      const _uris = this.uris
+      const children = _uris.filter(function(item) {
         return item.father === fatherName
       })
       return children
@@ -158,9 +159,13 @@ export default {
     },
     handleCreateTab() {
       const newTab = {
-        name: this.$route.path,
-        title: this.$route.name
+        name: this.$route.path
       }
+      this.uris.forEach(function(item) {
+        if (item.path === newTab.name) {
+          newTab.title = item.name
+        }
+      })
       const hasOne = this.pageTabs.filter(tab => tab.name === newTab.name)
       if (hasOne.length === 0) {
         this.pageTabs.push(newTab)
