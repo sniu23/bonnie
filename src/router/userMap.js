@@ -21,6 +21,7 @@ export const userMap = [
   { path: '/create/simple', component: _import('form/simple') },
   { path: '/create/crud', component: _import('form/crud') },
   { path: '/create/complex', component: _import('form/complex') },
+  { path: '/create/tree', component: _import('form/tree') },
   { path: '/detail/simple', component: _import('detail/simple') },
   { path: '/404', component: _import('404') }
 ]

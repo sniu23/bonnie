@@ -18,18 +18,27 @@ Vue.use(ElementUI, { size: 'small' })
 
 Vue.config.productionTip = false
 
+const whiteList = ['/login', '/register', '/404']
+
 router.beforeEach((to, from, next) => {
   NProgress.start()
-  if (to.path === '/login') {
-    // sessionStorage.removeItem('user')
-    store.dispatch('LOGOUT')
-  }
-  // const user = JSON.parse(sessionStorage.getItem('user'))
-  const user = store.state.user.user
-  if (!user && to.path !== '/login') {
-    next({ path: '/login' })
-  } else {
+  const valid = whiteList.some(function(item) {
+    return item === to.path
+  })
+  if (valid) {
     next()
+  } else {
+    if (to.path === '/login') {
+      // sessionStorage.removeItem('user')
+      store.dispatch('LOGOUT')
+    }
+    // const user = JSON.parse(sessionStorage.getItem('user'))
+    const user = store.state.user.user
+    if (!user && to.path !== '/login') {
+      next({ path: '/login' })
+    } else {
+      next()
+    }
   }
   NProgress.done()
 })

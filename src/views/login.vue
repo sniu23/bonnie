@@ -7,21 +7,21 @@
       <el-input v-model="formSign.no" placeholder="demo"></el-input>
     </el-form-item>
     <el-form-item label="密码" prop="password">
-      <el-input v-model="formSign.password" placeholder="demo"></el-input>
+      <el-input type="password" v-model="formSign.password" placeholder="demo"></el-input>
     </el-form-item>
     <el-form-item>
       <el-button type="primary" size="medium" @click="handlerSignIn" style="width: 100%">登录</el-button>
     </el-form-item>
   </el-form>
-    <el-alert type="error" class="explorer" 
-      title="推荐使用chrome、firefox等现代浏览器。"
-      :closable="false" center show-icon>
-    </el-alert>
+  <el-alert type="error" class="explorer" 
+    title="推荐使用chrome、firefox等现代浏览器。"
+    :closable="false" center show-icon>
+  </el-alert>
 
-    <el-alert type="info" class="copyright"
-      title="Copyright 2017 XX技术部出品"
-      :closable="false" center>
-    </el-alert>
+  <el-alert type="info" class="copyright"
+    title="Copyright 2017 XX技术部出品"
+    :closable="false" center>
+  </el-alert>
 
 </section>
 </template>
