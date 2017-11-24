@@ -1,4 +1,4 @@
 module.exports = {
   NODE_ENV: '"production"',
-  BASE_API: '"http://www.easy-mock.com/mock/5a0521f2034de12ca2038c5f/bonnie"',
+  BASE_API: '"http://127.0.0.1:7001/api/"',
 }

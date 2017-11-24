@@ -1,5 +1,12 @@
 import fetch from '@/utils/fetch'
 
+export function ok() {
+  return fetch({
+    url: '/ok',
+    method: 'get'
+  })
+}
+
 export function login({ no, password }) {
   return fetch({
     url: '/user/login',

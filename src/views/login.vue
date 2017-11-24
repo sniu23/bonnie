@@ -28,6 +28,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { ok } from '@/api/user'
 import { validate } from '@/utils/validator'
 import { loginRule } from '@/rules/user'
 
@@ -45,6 +46,9 @@ export default {
       user: state => state.user.user,
       title: state => state.app.title
     })
+  },
+  mounted: async function() {
+    await ok()
   },
   methods: {
     async handlerSignIn() {
