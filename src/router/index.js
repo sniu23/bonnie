@@ -11,13 +11,13 @@ Vue.use(Router)
 
 export const constantRouterMap = [
   { path: '/login', component: _import('login') },
-  { path: '/404', component: _import('404') },
+  { path: '/error/:code', component: _import('error'), props: true },
   {
     path: '/',
     component: Layout,
     children: userMap
   },
-  { path: '*', redirect: '/404' }
+  { path: '*', redirect: '/error/404' }
 ]
 
 export default new Router({

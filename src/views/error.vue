@@ -3,10 +3,10 @@
   <div class="top"></div>
   <section class="flex-row">
     <div class="box left">
-      <i class="el-icon-x-404"></i>
+      <i :class="'el-icon-x-'+code"></i>
     </div>
     <div class="box right">
-      <h2>{{notfound}}</h2>
+      <h2>{{desc}}</h2>
       <router-link to="/dashboard">
         <el-button type="primary" plain size="medium">返回首页</el-button>
       </router-link>
@@ -21,9 +21,16 @@
 
 <script>
 export default {
+  props: ['code'],
   data: function() {
+    let desc
+    if (this.code === '404') {
+      desc = '未找到该页！'
+    } else {
+      desc = '服务器内部错误！'
+    }
     return {
-      notfound: '未找到该页！'
+      desc
     }
   }
 }
@@ -50,10 +57,10 @@ export default {
     .box {
       width: 360px;
       margin: 20px 12px 60px 0;
-      .el-icon-x-404 {
+      .el-icon-x-404, .el-icon-x-500 {
         margin: 48px 0;
-        font-size: 120px;
-        font-weight: bold;
+        font-size: 240px;
+        // font-weight: bold;
         color: #409EFF;
       }
       .left {
