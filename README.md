@@ -35,13 +35,38 @@ npm run build --report
 
 # easy-mock
 
-|easy-mock|axios|eggjs|
-|-|-|-|
-|_req.params| |params|
-|_req.query|params|query|
-|_req.body|data|body|
+|easy-mock  |axios |eggjs |
+|-          |-     |-     |
+|_req.params|      |params|
+|_req.query |params|query |
+|_req.body  |data  |body  |
 
 em.demo.all
+
+# name
+
+|ui          |uri                 |controller|service  |orm         |
+|-           |-                   |-         |-        |-           |
+|search/list |get  /user          |list      |select   |select/count/query|
+|info        |get  /user/:id      |info      |get      |get/queryOne|
+|edit        |post /user          |make      |insert   |insert/query|
+|edit        |post /user/:id      |edit      |update   |update/query|
+|drop        |del  /user/:id      |drop      |delete   |delete/query|
+|*Muti       |post /user/*Muti    |*Muti     |*Muti    |*           |
+
+- service 多是数据库存取视角， 上层 controller 多是业务数据操作视角
+
+```js
+/* 
+many：ctx.query -> where, columns, orders, limit, offset
+    select(where, columns, orders, limit=20, offset=0)
+    get(where, columns, orders)
+one ：ctx.request.body -> row, ctx.params -> where (keys), ctx.query -> columns, orders
+    insert(row, columns)
+    update(row, where, columns)
+    delete(where)
+*/
+```
 
 # icon
 
@@ -75,4 +100,5 @@ em.demo.all
 </el-button>
 <i class="el-icon-x-addition" @click="handleAdd"/>
 ```
+
 

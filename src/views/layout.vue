@@ -23,7 +23,7 @@
       <li v-for="r1 in children('/')" :key="r1.path" 
         :is="r1.isLeaf ? 'el-menu-item' : 'el-submenu' "
         :index="r1.path">
-        <i v-if="r1.isLeaf" :class="'el-icon-' + randomIcon()"></i>
+        <i :class="'el-icon-' + randomIcon()"></i>
         <span v-if="r1.isLeaf" slot="title">{{r1.name}}</span>
         <template v-if="!r1.isLeaf" slot="title">
           <i :class="'el-icon-' + randomIcon()"></i>
@@ -34,7 +34,7 @@
           <li v-for="r2 in children(r1.path)" :key="r2.path" 
             :is="r2.isLeaf ? 'el-menu-item' : 'el-submenu' "
             :index="r2.path">
-            <i v-if="r2.isLeaf" :class="'el-icon-' + randomIcon()"></i>
+            <i :class="'el-icon-' + randomIcon()"></i>
             <span v-if="r2.isLeaf" slot="title">{{r2.name}}</span>
             <template v-if="!r2.isLeaf" slot="title">
               <i :class="'el-icon-' + randomIcon()"></i>
@@ -74,7 +74,7 @@
     </div>
     <!--修改密码-->
     <el-dialog title="修改密码" :visible.sync="passwordVisible">
-      <el-form :model="formPwd" label-width="120px" ref="formPwd">
+      <el-form :model="formPwd" label-width="120px" ref="formPwd" :rules="rules">
         <el-form-item label="老密码" prop="oldPwd">
           <el-input type="password" v-model="formPwd.oldPwd" auto-complete="off"></el-input>
         </el-form-item>
@@ -97,12 +97,29 @@
 <script>
 import { mapState } from 'vuex'
 import { changePwd } from '@/api/user'
-import { validate } from '@/utils/validator'
-import { changePwdRule } from '@/rules/user'
 
 export default {
   name: 'layout',
   data() {
+    const validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入密码'))
+      } else {
+        if (this.formPwd.cfmPwd !== '') {
+          this.$refs.formPwd.validateField('cfmPwd')
+        }
+        callback()
+      }
+    }
+    const validatePass2 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'))
+      } else if (value !== this.formPwd.newPwd) {
+        callback(new Error('两次输入密码不一致!'))
+      } else {
+        callback()
+      }
+    }
     return {
       menuCollapsed: false,
       passwordVisible: false,
@@ -115,7 +132,16 @@ export default {
       pageTabs: [
         { name: '/dashboard', title: '主页', closable: false }
       ],
-      currTab: '/dashboard'
+      currTab: '/dashboard',
+      rules: {
+        oldPwd: { type: 'string', message: '旧密码不能为空！', required: true, trigger: 'blur' },
+        newPwd: [
+          { validator: validatePass, trigger: 'blur' }
+        ],
+        cfmPwd: [
+          { validator: validatePass2, trigger: 'blur' }
+        ]
+      }
     }
   },
   computed: {
@@ -124,29 +150,15 @@ export default {
       title: state => state.app.title,
       uris: state => state.user.uris
     })
-    // root: function() {
-    //   let home
-    //   this.$router.options.routes.forEach(function(item) {
-    //     if (item.path === '/') {
-    //       home = item.children
-    //     }
-    //   })
-    //   const allowed = this.uris
-    //   const root = home.filter(function(item) {
-    //     return allowed.indexOf(item.path) >= 0
-    //   })
-    //   return root
-    // }
   },
   mounted: async function() {
-    // this.$data.user = JSON.parse(sessionStorage.getItem('user'))
     await this.$store.dispatch('NAVIGATE')
   },
   watch: {
     '$route': 'handleCreateTab'
   },
   methods: {
-    children: function(fatherName) {
+    children(fatherName) {
       const _uris = this.uris
       const children = _uris.filter(function(item) {
         return item.father === fatherName
@@ -195,12 +207,12 @@ export default {
       this.$router.push({ path: tab.name })
     },
     async handleChangePwd() {
-      const valid = await validate(changePwdRule, this.formPwd, { first: true })
+      const valid = await this.$refs['formPwd'].validate()
       if (valid) {
         const { success, message } = await changePwd({
           no: this.user.no || '',
-          oldpwd: this.formPwd.oldPwd,
-          newpwd: this.formPwd.newPwd
+          oldPwd: this.formPwd.oldPwd,
+          newPwd: this.formPwd.newPwd
         })
         this.$refs['formPwd'].resetFields()
         if (success) {

@@ -11,7 +11,10 @@ Vue.use(Router)
 
 export const constantRouterMap = [
   { path: '/login', component: _import('login') },
+  { path: '/register', component: _import('register') },
   { path: '/error/:code', component: _import('error'), props: true },
+  { path: '/page', component: _import('system/page') },
+  { path: '/role', component: _import('system/role') },
   {
     path: '/',
     component: Layout,

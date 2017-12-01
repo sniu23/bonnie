@@ -39,3 +39,10 @@ export function navigate() {
   })
 }
 
+export function register({ no, name, password, mail, mobile }) {
+  return fetch({
+    url: '/user/register',
+    method: 'post',
+    data: { no, name, password, mail, mobile }
+  })
+}

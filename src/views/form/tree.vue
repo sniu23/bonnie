@@ -59,7 +59,6 @@ export default {
     },
 
     renderContent(createElement, { node, data, store }) {
-      const self = this
       return createElement(
         'span', {
           style: {

@@ -18,7 +18,7 @@ Vue.use(ElementUI, { size: 'small' })
 
 Vue.config.productionTip = false
 
-const whiteList = ['/login', '/register', '/error/404', '/error/500']
+const whiteList = ['/login', '/register', '/error/404', '/error/500', '/page', '/role']
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
