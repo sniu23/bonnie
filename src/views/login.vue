@@ -1,7 +1,7 @@
 <template>
 <section class="box-flex">
   <div class="top"></div>
-  <div>
+  <div class="content">
     <div class="title-website">{{title}}</div>
     <el-tabs value="first">
       <el-tab-pane label="帐号登录" name="first">
@@ -39,7 +39,6 @@
 
 <script>
 import { mapState } from 'vuex'
-import { ok } from '@/api/user'
 
 export default {
   data: function() {
@@ -63,18 +62,17 @@ export default {
   computed: {
     ...mapState({
       user: state => state.user.user,
-      title: state => state.app.title
+      title: state => state.app.title,
+      uris: state => state.user.uris
     })
-  },
-  mounted: async function() {
-    await ok()
   },
   methods: {
     async handlerSignIn(formName) {
       const valid = await this.$refs[formName].validate()
       if (valid) {
         await this.$store.dispatch('LOGIN', this.formSign)
-        if (this.user) {
+        await this.$store.dispatch('NAVIGATE')
+        if (this.user && this.uris && (this.uris.length > 0)) {
           this.$router.push({ path: '/dashboard' })
         }
       }
@@ -96,16 +94,18 @@ export default {
   height: 100vh;
   padding: 0;
   margin: 0;
-  .title-website {
-    text-align: center;
-    color: $color-blue;
-    font-size: $size-title1;
-    font-weight: bolder;
-    margin: 40px 0;
-  }
-  .explorer {
+  .content {
     width: 360px;
-    margin: 40px 0;
+    .title-website {
+      text-align: center;
+      color: $color-blue;
+      font-size: $size-title1;
+      font-weight: bolder;
+      margin: 40px 0;
+    }
+    .explorer {
+      margin: 40px 0;
+    }
   }
   .copyright {
     height: 80px;

@@ -2,11 +2,14 @@
 <section>
   <el-form :model="search" ref="search" class="search" label-width="80px" inline>
     <br/>
-    <el-form-item label="代码" prop="code">
-      <el-input v-model="search.code"></el-input>
+    <el-form-item label="页面路径" prop="pagePath">
+      <el-input v-model="search.pagePath"></el-input>
     </el-form-item>
-    <el-form-item label="名字" prop="name">
-      <el-input v-model="search.name"></el-input>
+    <el-form-item label="权限代码" prop="roleCode">
+      <el-input v-model="search.roleCode"></el-input>
+    </el-form-item>
+    <el-form-item label="允许操作" prop="allow">
+      <el-input v-model="search.allow"></el-input>
     </el-form-item>
     <el-form-item label="有效否" prop="valid">
       <el-select v-model="search.valid" placeholder="请选择">
@@ -21,12 +24,13 @@
       <el-button type="danger" @click="handleMake()">新增</el-button>
     </el-button-group>
   </el-form>
-
   <div v-loading.body="loading">
     <el-table :data="list" ref="list">
-      <el-table-column label="代码" prop="code">
+      <el-table-column label="页面路径" prop="pagePath">
       </el-table-column>
-      <el-table-column label="名字" prop="name">
+      <el-table-column label="权限代码" prop="roleCode">
+      </el-table-column>
+      <el-table-column label="允许操作" prop="allow">
       </el-table-column>
       <el-table-column label="有效否" prop="valid">
       </el-table-column>
@@ -49,11 +53,14 @@
       <el-form-item label="ID" prop="id" v-show="edit.id">
         <span>{{edit.id}}</span>
       </el-form-item>
-      <el-form-item label="代码" prop="code">
-        <el-input v-model="edit.code" :disabled="Boolean(edit.id)"></el-input>
+      <el-form-item label="页面路径" prop="pagePath">
+        <el-input v-model="edit.pagePath" :disabled="Boolean(edit.id)"></el-input>
       </el-form-item>
-      <el-form-item label="名字" prop="name">
-        <el-input v-model="edit.name"></el-input>
+      <el-form-item label="权限代码" prop="roleCode">
+        <el-input v-model="edit.roleCode" :disabled="Boolean(edit.id)"></el-input>
+      </el-form-item>
+      <el-form-item label="允许操作" prop="allow">
+        <el-input v-model="edit.allow"></el-input>
       </el-form-item>
       <el-form-item label="有效否" prop="valid">
         <el-switch v-model="edit.valid" active-text="是" inactive-text="否"></el-switch>
@@ -76,8 +83,9 @@ export default {
   data() {
     return {
       search: {
-        code: undefined,
-        name: undefined,
+        pagePath: undefined,
+        roleCode: undefined,
+        allow: undefined,
         valid: undefined
       },
       list: [],
@@ -87,18 +95,22 @@ export default {
       loading: false,
       edit: {
         id: '',
-        code: '',
-        name: '',
+        pagePath: '',
+        roleCode: '',
+        allow: '',
         valid: true
       },
       rules: {
-        code: [
-          { required: true, message: '请输入代码', trigger: 'blur' },
+        pagePath: [
+          { required: true, message: '请输入页面路径', trigger: 'blur' },
+          { min: 1, max: 40, message: '长度在 1 到 40 个字符', trigger: 'blur' }
+        ],
+        roleCode: [
+          { required: true, message: '请输入权限代码', trigger: 'blur' },
           { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
         ],
-        name: [
-          { required: true, message: '请输入名字', trigger: 'blur' },
-          { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+        allow: [
+          { min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur' }
         ]
       },
       editVisible: false
@@ -125,7 +137,7 @@ export default {
       }
       this.loading = true
       const { success, data } = await fetch({
-        url: '/role',
+        url: '/power',
         method: 'get',
         params: {
           where: this.search,
@@ -148,12 +160,18 @@ export default {
       this.editVisible = true
     },
     handleRowEdit(row) {
-      this.edit = Object.assign({}, { id: row.id, code: row.code, name: row.name, valid: Boolean(row.valid) })
+      this.edit = Object.assign({}, {
+        id: row.id,
+        pagePath: row.pagePath,
+        roleCode: row.roleCode,
+        allow: row.allow,
+        valid: Boolean(row.valid)
+      })
       this.editVisible = true
     },
     async handleRowDrop(row) {
       const { success, message } = await fetch({
-        url: '/role/' + row.id,
+        url: '/power/' + row.id,
         method: 'delete'
       })
       if (success) {
@@ -165,7 +183,7 @@ export default {
       const valid = await this.$refs.edit.validate()
       if (valid) {
         const { success, message } = await fetch({
-          url: '/role' + ((this.edit.id) ? '/' + this.edit.id : ''),
+          url: '/power' + ((this.edit.id) ? '/' + this.edit.id : ''),
           method: 'post',
           data: this.edit
         })
@@ -195,4 +213,3 @@ export default {
   margin-top: 10px;
 }
 </style>
-

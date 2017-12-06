@@ -1,5 +1,4 @@
-@import './element-ui.scss';
-@import './mixin.scss';
+// @import './mixin.scss';
 @import './vars.scss';
 
 html {
@@ -35,7 +34,7 @@ a:hover {
 
 .clearfix:before,
 .clearfix:after {
-	display: table;
+	display: block;
 	content: "";
 }
 
@@ -45,7 +44,6 @@ a:hover {
 
 .clearfix .toRight {
   float: right; 
-  padding: 3px 0;
 }
 
 [class^="el-icon-x"], [class*=" el-icon-x"] {

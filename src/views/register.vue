@@ -1,7 +1,7 @@
 <template>
 <section class="box-flex">
   <div class="top"></div>
-  <div>
+  <div class="content">
     <div class="title-website">{{title}}</div>
     <el-tabs value="first">
       <el-tab-pane label="注册" name="first">
@@ -45,7 +45,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { register } from '@/api/user'
+import fetch from '@/utils/fetch'
 
 export default {
   data: function() {
@@ -59,20 +59,21 @@ export default {
       },
       rules: {
         no: [
-          { required: true, message: '请输入账户名', trigger: 'blur' },
+          { required: true, message: '请输入帐号', trigger: 'blur' },
           { min: 8, max: 20, message: '长度在 8 到 20 个字符', trigger: 'blur' }
         ],
         name: [
           { required: true, message: '请输入姓名', trigger: 'blur' },
-          { min: 2, max: 20, message: '长度在 8 到 20 个字符', trigger: 'blur' }
+          { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 8, max: 20, message: '长度在 8 到 20 个字符', trigger: 'blur' }
+          { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
         ],
         mail: [
           { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-          { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
+          { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' },
+          { min: 1, max: 40, message: '长度在 1 到 40 个字符', trigger: 'blur' }
         ],
         mobile: [
           { required: true, message: '请输入手机号', trigger: 'blur' },
@@ -90,8 +91,11 @@ export default {
     async handlerRegister(formName) {
       const valid = await this.$refs[formName].validate()
       if (valid) {
-        console.log(this.formRegister)
-        const { success, message } = await register(this.formRegister)
+        const { success, message } = await fetch({
+          url: '/register',
+          method: 'post',
+          data: this.formRegister
+        })
         if (success) {
           this.$message({
             message,
@@ -119,16 +123,18 @@ export default {
   height: 100vh;
   padding: 0;
   margin: 0;
-  .title-website {
-    text-align: center;
-    color: $color-blue;
-    font-size: $size-title1;
-    font-weight: bolder;
-    margin: 40px 0;
-  }
-  .explorer {
+  .content {
     width: 360px;
-    margin: 40px 0;
+    .title-website {
+      text-align: center;
+      color: $color-blue;
+      font-size: $size-title1;
+      font-weight: bolder;
+      margin: 40px 0;
+    }
+    .explorer {
+      margin: 40px 0;
+    }
   }
   .copyright {
     height: 80px;

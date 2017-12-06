@@ -2,11 +2,23 @@
 <section>
   <el-form :model="search" ref="search" class="search" label-width="80px" inline>
     <br/>
-    <el-form-item label="代码" prop="code">
-      <el-input v-model="search.code"></el-input>
+    <el-form-item label="帐号" prop="no">
+      <el-input v-model="search.no"></el-input>
     </el-form-item>
-    <el-form-item label="名字" prop="name">
+    <el-form-item label="姓名" prop="name">
       <el-input v-model="search.name"></el-input>
+    </el-form-item>
+    <el-form-item label="密码" prop="password">
+      <el-input v-model="search.password"></el-input>
+    </el-form-item>
+    <el-form-item label="邮件" prop="mail">
+      <el-input v-model="search.mail"></el-input>
+    </el-form-item>
+    <el-form-item label="手机号" prop="mobile">
+      <el-input v-model="search.mobile"></el-input>
+    </el-form-item>
+    <el-form-item label="权限" prop="roleCode">
+      <el-input v-model="search.roleCode"></el-input>
     </el-form-item>
     <el-form-item label="有效否" prop="valid">
       <el-select v-model="search.valid" placeholder="请选择">
@@ -24,9 +36,17 @@
 
   <div v-loading.body="loading">
     <el-table :data="list" ref="list">
-      <el-table-column label="代码" prop="code">
+      <el-table-column label="帐号" prop="no">
       </el-table-column>
-      <el-table-column label="名字" prop="name">
+      <el-table-column label="姓名" prop="name">
+      </el-table-column>
+      <el-table-column label="密码" prop="password">
+      </el-table-column>
+      <el-table-column label="邮件" prop="mail">
+      </el-table-column>
+      <el-table-column label="手机号" prop="mobile">
+      </el-table-column>
+      <el-table-column label="权限" prop="roleCode">
       </el-table-column>
       <el-table-column label="有效否" prop="valid">
       </el-table-column>
@@ -49,11 +69,23 @@
       <el-form-item label="ID" prop="id" v-show="edit.id">
         <span>{{edit.id}}</span>
       </el-form-item>
-      <el-form-item label="代码" prop="code">
-        <el-input v-model="edit.code" :disabled="Boolean(edit.id)"></el-input>
+      <el-form-item label="帐号" prop="no">
+        <el-input v-model="edit.no" :disabled="Boolean(edit.id)"></el-input>
       </el-form-item>
-      <el-form-item label="名字" prop="name">
+      <el-form-item label="姓名" prop="name">
         <el-input v-model="edit.name"></el-input>
+      </el-form-item>
+      <el-form-item label="密码" prop="password">
+        <el-input v-model="edit.password"></el-input>
+      </el-form-item>
+      <el-form-item label="邮件" prop="mail">
+        <el-input v-model="edit.mail"></el-input>
+      </el-form-item>
+      <el-form-item label="手机号" prop="mobile">
+        <el-input v-model="edit.mobile"></el-input>
+      </el-form-item>
+      <el-form-item label="权限" prop="roleCode">
+        <el-input v-model="edit.roleCode"></el-input>
       </el-form-item>
       <el-form-item label="有效否" prop="valid">
         <el-switch v-model="edit.valid" active-text="是" inactive-text="否"></el-switch>
@@ -76,8 +108,12 @@ export default {
   data() {
     return {
       search: {
-        code: undefined,
+        no: undefined,
         name: undefined,
+        password: undefined,
+        mail: undefined,
+        mobile: undefined,
+        roleCode: undefined,
         valid: undefined
       },
       list: [],
@@ -87,17 +123,38 @@ export default {
       loading: false,
       edit: {
         id: '',
-        code: '',
+        no: '',
         name: '',
+        password: '',
+        mail: '',
+        mobile: '',
+        roleCode: '',
         valid: true
       },
       rules: {
-        code: [
-          { required: true, message: '请输入代码', trigger: 'blur' },
-          { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+        no: [
+          { required: true, message: '请输入帐号', trigger: 'blur' },
+          { min: 8, max: 20, message: '长度在 8 到 20 个字符', trigger: 'blur' }
         ],
         name: [
-          { required: true, message: '请输入名字', trigger: 'blur' },
+          { required: true, message: '请输入姓名', trigger: 'blur' },
+          { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
+        ],
+        mail: [
+          { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+          { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' },
+          { min: 1, max: 40, message: '长度在 1 到 40 个字符', trigger: 'blur' }
+        ],
+        mobile: [
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          { pattern: '^\\d{11}$', message: '正确的手机号：长度11位、数字', trigger: 'blur,change' }
+        ],
+        roleCode: [
+          { required: true, message: '请输入权限代码', trigger: 'blur' },
           { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
         ]
       },
@@ -125,7 +182,7 @@ export default {
       }
       this.loading = true
       const { success, data } = await fetch({
-        url: '/role',
+        url: '/user',
         method: 'get',
         params: {
           where: this.search,
@@ -148,12 +205,21 @@ export default {
       this.editVisible = true
     },
     handleRowEdit(row) {
-      this.edit = Object.assign({}, { id: row.id, code: row.code, name: row.name, valid: Boolean(row.valid) })
+      this.edit = Object.assign({}, {
+        id: row.id,
+        no: row.no,
+        name: row.name,
+        password: row.password,
+        mail: row.mail,
+        mobile: row.mobile,
+        roleCode: row.roleCode,
+        valid: Boolean(row.valid)
+      })
       this.editVisible = true
     },
     async handleRowDrop(row) {
       const { success, message } = await fetch({
-        url: '/role/' + row.id,
+        url: '/user/' + row.id,
         method: 'delete'
       })
       if (success) {
@@ -165,7 +231,7 @@ export default {
       const valid = await this.$refs.edit.validate()
       if (valid) {
         const { success, message } = await fetch({
-          url: '/role' + ((this.edit.id) ? '/' + this.edit.id : ''),
+          url: '/user' + ((this.edit.id) ? '/' + this.edit.id : ''),
           method: 'post',
           data: this.edit
         })
@@ -195,4 +261,3 @@ export default {
   margin-top: 10px;
 }
 </style>
-

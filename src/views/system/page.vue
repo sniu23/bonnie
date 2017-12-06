@@ -1,176 +1,244 @@
 <template>
 <section>
-  <el-tree :data="tree" ref="tree" :props="props" node-key="path" show-checkbox 
-    default-expand-all accordion highlight-current :expand-on-click-node="false"
-    :render-content="renderContent">
-  </el-tree>
+  <el-form :model="search" ref="search" class="search" label-width="80px" inline>
+    <br/>
+    <el-form-item label="路径" prop="path">
+      <el-input v-model="search.path"></el-input>
+    </el-form-item>
+    <el-form-item label="名字" prop="name">
+      <el-input v-model="search.name"></el-input>
+    </el-form-item>
+    <el-form-item label="图标" prop="icon">
+      <el-input v-model="search.icon"></el-input>
+    </el-form-item>
+    <el-form-item label="动作" prop="action">
+      <el-input v-model="search.action"></el-input>
+    </el-form-item>
+    <el-form-item label="父菜单" prop="father">
+      <el-input v-model="search.father"></el-input>
+    </el-form-item>
+    <el-form-item label="有效否" prop="valid">
+      <el-select v-model="search.valid" placeholder="请选择">
+        <el-option label="是" :value="true"/>
+        <el-option label="否" :value="false"/>
+      </el-select>
+    </el-form-item>
+    <br/>
+    <el-button-group>
+      <el-button type="primary" @click="searchSubmit()">查询</el-button>
+      <el-button @click="searchReset()">重置</el-button>
+      <el-button type="danger" @click="handleMake()">新增</el-button>
+    </el-button-group>
+  </el-form>
 
-  <el-dialog title="页面信息" :visible.sync="dialogVisible">
-    <el-form :model="formPage" ref="formPage" label-width="80px">
+  <div v-loading.body="loading">
+    <el-table :data="list" ref="list">
+      <el-table-column label="路径" prop="path">
+      </el-table-column>
+      <el-table-column label="名字" prop="name">
+      </el-table-column>
+      <el-table-column label="图标" prop="icon">
+      </el-table-column>
+      <el-table-column label="父菜单" prop="father">
+      </el-table-column>
+      <el-table-column label="动作" prop="action">
+      </el-table-column>
+      <el-table-column label="有效否" prop="valid">
+      </el-table-column>
+      <el-table-column fixed="left" label="操作" width="100">
+        <template slot-scope="scope">
+          <el-button @click="handleRowEdit(scope.row)" type="text" size="small">编辑</el-button>
+          <el-button @click="handleRowDrop(scope.row)" type="text" size="small">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <el-pagination layout="total, ->, sizes, prev, pager, next, jumper" 
+      @current-change="handlePageChange" @size-change="handleSizeChange"
+      :current-page.sync="pageNumber" :page-size="pageSize" :total="total" :page-sizes="[5, 10, 20, 50]">
+    </el-pagination>
+  </div>
+
+  <el-dialog title="编辑" :visible.sync="editVisible" width="50%">
+    <el-form :model="edit" ref="edit" :rules="rules" label-width="80px">
+      <el-form-item label="ID" prop="id" v-show="edit.id">
+        <span>{{edit.id}}</span>
+      </el-form-item>
       <el-form-item label="路径" prop="path">
-        <el-input v-model="formPage.path"></el-input>
+        <el-input v-model="edit.path" :disabled="Boolean(edit.id)"></el-input>
       </el-form-item>
       <el-form-item label="名字" prop="name">
-        <el-input v-model="formPage.name"></el-input>
+        <el-input v-model="edit.name"></el-input>
+      </el-form-item>
+      <el-form-item label="图标" prop="icon">
+        <el-input v-model="edit.icon"></el-input>
+      </el-form-item>
+      <el-form-item label="父菜单" prop="father">
+        <el-input v-model="edit.father"></el-input>
+      </el-form-item>
+      <el-form-item label="动作" prop="action">
+        <el-input v-model="edit.action"></el-input>
+      </el-form-item>
+      <el-form-item label="有效否" prop="valid">
+        <el-switch v-model="edit.valid" active-text="是" inactive-text="否"></el-switch>
       </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer">
-      <el-button @click="dialogVisible = false">取 消</el-button>
-      <el-button type="primary" @click="handleEdit">保 存</el-button>
-    </div>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="editReset">取消</el-button>
+      <el-button type="primary" @click="editSubmit">保存</el-button>
+    </span>
   </el-dialog>
+
 </section>
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import fetch from '@/utils/fetch'
+
 export default {
-  data: function() {
+  data() {
     return {
-      props: {
-        label: 'name',
-        children: 'children'
+      search: {
+        path: undefined,
+        name: undefined,
+        icon: undefined,
+        action: undefined,
+        father: undefined,
+        valid: undefined
       },
       list: [],
-      tree: [],
-      dialogVisible: false,
-      formPage: {
+      total: 0,
+      pageNumber: 1,
+      pageSize: 0,
+      loading: false,
+      edit: {
+        id: '',
         path: '',
         name: '',
-        children: []
+        icon: '',
+        action: '',
+        father: '',
+        valid: true
       },
-      currKey: ''
+      rules: {
+        path: [
+          { required: true, message: '请输入路径', trigger: 'blur' },
+          { min: 1, max: 40, message: '长度在 1 到 40 个字符', trigger: 'blur' }
+        ],
+        name: [
+          { required: true, message: '请输入名字', trigger: 'blur' },
+          { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+        ],
+        icon: [
+          { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+        ],
+        action: [
+          { min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur' }
+        ],
+        father: [
+          { min: 1, max: 40, message: '长度在 1 到 40 个字符', trigger: 'blur' }
+        ]
+      },
+      editVisible: false
     }
   },
+  computed: {
+    ...mapState({
+      defaultPageSize: state => state.app.defaultPageSize
+    })
+  },
   mounted: function() {
-    this.list = [
-      { path: '/page1', name: '页面1', father: '/', allow: 'Q,A' },
-      { path: '/menu2', name: '菜单2', father: '/', allow: 'Q,A' },
-      { path: '/page21', name: '页面21', father: '/menu2', allow: 'Q,A' },
-      { path: '/page22', name: '页面22', father: '/menu2', allow: 'Q,A' },
-      { path: '/menu23', name: '菜单23', father: '/menu2', allow: 'Q,A' },
-      { path: '/page231', name: '页面231', father: '/menu23', allow: 'Q,A' },
-      { path: '/page232', name: '页面232', father: '/menu23', allow: 'Q,A' }
-    ]
-    this.tree = this.list2tree(this.list)
+    this.pageSize = this.defaultPageSize
   },
   methods: {
-    list2tree(list) {
-      const getChildren = function(fatherName) {
-        const _son = list.filter(function(item) {
-          return item.father === fatherName
+    searchSubmit() {
+      this.handlePageChange()
+    },
+    searchReset() {
+      this.$refs.search.resetFields()
+    },
+    async handlePageChange(pageNumber) {
+      if (pageNumber) {
+        this.pageNumber = pageNumber
+      }
+      this.loading = true
+      const { success, data } = await fetch({
+        url: '/page',
+        method: 'get',
+        params: {
+          where: this.search,
+          limit: this.pageSize,
+          offset: (this.pageNumber - 1) * this.pageSize
+        }
+      })
+      if (success) {
+        this.list = data.rows
+        this.total = data.count
+      }
+      this.loading = false
+    },
+    handleSizeChange(pageSize) {
+      this.pageSize = pageSize
+      this.handlePageChange()
+    },
+    handleMake() {
+      this.edit = {}
+      this.editVisible = true
+    },
+    handleRowEdit(row) {
+      this.edit = Object.assign({}, {
+        id: row.id,
+        path: row.path,
+        name: row.name,
+        icon: row.icon,
+        father: row.father,
+        action: row.action,
+        valid: Boolean(row.valid)
+      })
+      this.editVisible = true
+    },
+    async handleRowDrop(row) {
+      const { success, message } = await fetch({
+        url: '/page/' + row.id,
+        method: 'delete'
+      })
+      if (success) {
+        this.$message.success(message)
+        await this.handlePageChange()
+      }
+    },
+    async editSubmit() {
+      const valid = await this.$refs.edit.validate()
+      if (valid) {
+        const { success, message } = await fetch({
+          url: '/page' + ((this.edit.id) ? '/' + this.edit.id : ''),
+          method: 'post',
+          data: this.edit
         })
-        let _grandson
-        if (_son.length > 0) {
-          _grandson = _son.map(function(item) {
-            item = Object.assign({}, item, { children: getChildren(item.path) })
-            return item
-          })
-        } else {
-          _grandson = []
+        if (success) {
+          this.$message.success(message)
+          this.$refs.edit.resetFields()
+          this.editVisible = false
+          await this.handlePageChange()
         }
-        return _grandson
       }
-      const root = {
-        path: '/',
-        name: '根',
-        father: ''
-      }
-      root.children = getChildren('/') || []
-      return [root]
     },
-    renderContent(createElement, { node, data, store }) {
-      const self = this
-      const pageName = createElement('el-tooltip', {
-        attrs: {
-          content: data.path,
-          placement: 'right'
-        }
-      }, [
-        createElement('span', data.name)
-      ])
-      const pageAllow = createElement('el-tag', {
-        attrs: {
-          size: 'mini'
-        }
-      }, data.allow)
-      const makeNew = createElement('el-button', {
-        style: {
-          'font-size': '12px'
-        },
-        attrs: {
-          type: 'text'
-        },
-        nativeOn: {
-          click: function() {
-            self.currKey = data.path
-            self.formPage.path = data.path
-            self.formPage.name = data.name
-            self.formPage.children = data.children
-            self.dialogVisible = true
-          }
-        }
-      }, '修改')
-      const makeSon = createElement('el-button', {
-        style: {
-          'font-size': '12px'
-        },
-        attrs: {
-          type: 'text'
-        },
-        nativeOn: {
-          click: function() {
-            const newChild = { name: '新增页面', children: [] }
-            self.formPage = newChild
-            data.children.push(newChild)
-          }
-        }
-      }, '追加下级页面')
-      const remove = createElement('el-button', {
-        style: {
-          'font-size': '12px'
-        },
-        attrs: {
-          type: 'text'
-        },
-        nativeOn: {
-          click: function() {
-            const parent = node.parent
-            const children = parent.data.children || parent.data
-            const index = children.findIndex(d => d.id === data.id)
-            children.splice(index, 1)
-          }
-        }
-      }, '删除')
-      const left = createElement('span', [pageName])
-      const right = createElement('span', [pageAllow])
-      return createElement(
-        'span', {
-          style: {
-            'flex': '1',
-            'display': 'flex',
-            'align-items': 'center',
-            'justify-content': 'space-between',
-            'font-size': '14px',
-            'padding-right': '8px'
-          }
-        }
-        , [left, right]
-      )
-    },
-    handleEdit(key) {
-      console.log(this.currKey)
-      console.log(this.formPage)
-      this.$refs.tree.updateKeyChildren(this.currKey, [{
-        path: this.formPage.path,
-        name: this.formPage.name,
-        children: this.formPage.children
-      }])
-      this.dialogVisible = false
+    editReset() {
+      this.$refs.edit.resetFields()
+      this.editVisible = false
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-
+.search {
+  .el-input, .el-select {
+    width: 200px;
+  }
+}
+.el-pagination {
+  margin-top: 10px;
+}
 </style>
