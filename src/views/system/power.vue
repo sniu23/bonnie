@@ -1,18 +1,17 @@
 <template>
 <section>
-  <el-form :model="search" ref="search" class="search" label-width="80px" inline>
-    <br/>
-    <el-form-item label="页面路径" prop="pagePath">
-      <el-input v-model="search.pagePath"></el-input>
+  <el-form :model="search" ref="search" class="search" label-width="0px" inline>
+    <el-form-item prop="pagePath">
+      <el-input v-model="search.pagePath" placeholder="页面路径"></el-input>
     </el-form-item>
-    <el-form-item label="权限代码" prop="roleCode">
-      <el-input v-model="search.roleCode"></el-input>
+    <el-form-item prop="roleCode">
+      <el-input v-model="search.roleCode" placeholder="权限代码"></el-input>
     </el-form-item>
-    <el-form-item label="允许操作" prop="allow">
-      <el-input v-model="search.allow"></el-input>
+    <el-form-item prop="allow">
+      <el-input v-model="search.allow" placeholder="允许操作"></el-input>
     </el-form-item>
-    <el-form-item label="有效否" prop="valid">
-      <el-select v-model="search.valid" placeholder="请选择">
+    <el-form-item prop="valid">
+      <el-select v-model="search.valid" placeholder="有效否">
         <el-option label="是" :value="true"/>
         <el-option label="否" :value="false"/>
       </el-select>

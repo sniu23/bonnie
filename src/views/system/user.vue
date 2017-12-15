@@ -1,27 +1,26 @@
 <template>
 <section>
-  <el-form :model="search" ref="search" class="search" label-width="80px" inline>
-    <br/>
-    <el-form-item label="帐号" prop="no">
-      <el-input v-model="search.no"></el-input>
+  <el-form :model="search" ref="search" class="search" label-width="0px" inline>
+    <el-form-item prop="no">
+      <el-input v-model="search.no" placeholder="帐号"></el-input>
     </el-form-item>
-    <el-form-item label="姓名" prop="name">
-      <el-input v-model="search.name"></el-input>
+    <el-form-item prop="name">
+      <el-input v-model="search.name"  placeholder="姓名"></el-input>
     </el-form-item>
-    <el-form-item label="密码" prop="password">
-      <el-input v-model="search.password"></el-input>
+    <el-form-item prop="password">
+      <el-input v-model="search.password"  placeholder="密码"></el-input>
     </el-form-item>
-    <el-form-item label="邮件" prop="mail">
-      <el-input v-model="search.mail"></el-input>
+    <el-form-item prop="mail">
+      <el-input v-model="search.mail"  placeholder="邮件"></el-input>
     </el-form-item>
-    <el-form-item label="手机号" prop="mobile">
-      <el-input v-model="search.mobile"></el-input>
+    <el-form-item prop="mobile">
+      <el-input v-model="search.mobile"  placeholder="手机号"></el-input>
     </el-form-item>
-    <el-form-item label="权限" prop="roleCode">
-      <el-input v-model="search.roleCode"></el-input>
+    <el-form-item prop="roleCode">
+      <el-input v-model="search.roleCode"  placeholder="权限"></el-input>
     </el-form-item>
-    <el-form-item label="有效否" prop="valid">
-      <el-select v-model="search.valid" placeholder="请选择">
+    <el-form-item prop="valid">
+      <el-select v-model="search.valid" placeholder="有效否">
         <el-option label="是" :value="true"/>
         <el-option label="否" :value="false"/>
       </el-select>

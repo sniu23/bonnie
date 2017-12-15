@@ -1,24 +1,23 @@
 <template>
 <section>
-  <el-form :model="search" ref="search" class="search" label-width="80px" inline>
-    <br/>
-    <el-form-item label="路径" prop="path">
-      <el-input v-model="search.path"></el-input>
+  <el-form :model="search" ref="search" class="search" label-width="0px" inline>
+    <el-form-item prop="path">
+      <el-input v-model="search.path" placeholder="路径"></el-input>
     </el-form-item>
-    <el-form-item label="名字" prop="name">
-      <el-input v-model="search.name"></el-input>
+    <el-form-item prop="name">
+      <el-input v-model="search.name" placeholder="名字"></el-input>
     </el-form-item>
-    <el-form-item label="图标" prop="icon">
-      <el-input v-model="search.icon"></el-input>
+    <el-form-item prop="icon">
+      <el-input v-model="search.icon" placeholder="图标"></el-input>
     </el-form-item>
-    <el-form-item label="动作" prop="action">
-      <el-input v-model="search.action"></el-input>
+    <el-form-item prop="action">
+      <el-input v-model="search.action" placeholder="动作"></el-input>
     </el-form-item>
-    <el-form-item label="父菜单" prop="father">
-      <el-input v-model="search.father"></el-input>
+    <el-form-item prop="father">
+      <el-input v-model="search.father" placeholder="父菜单"></el-input>
     </el-form-item>
-    <el-form-item label="有效否" prop="valid">
-      <el-select v-model="search.valid" placeholder="请选择">
+    <el-form-item prop="valid">
+      <el-select v-model="search.valid" placeholder="有效否">
         <el-option label="是" :value="true"/>
         <el-option label="否" :value="false"/>
       </el-select>
@@ -28,6 +27,7 @@
       <el-button type="primary" @click="searchSubmit()">查询</el-button>
       <el-button @click="searchReset()">重置</el-button>
       <el-button type="danger" @click="handleMake()">新增</el-button>
+      <el-button @click="treeShow()">树状浏览</el-button>
     </el-button-group>
   </el-form>
 
@@ -89,12 +89,21 @@
     </span>
   </el-dialog>
 
+  <el-dialog title="树状浏览" :visible.sync="treeVisible" width="50%">
+    <el-tree :data="tree" ref="tree" :props="treeProps" node-key="path"
+      default-expand-all accordion highlight-current></el-tree>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="treeVisible = false">关闭</el-button>
+    </span>
+  </el-dialog>
+
 </section>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import fetch from '@/utils/fetch'
+import list2tree from '@/utils/list2tree'
 
 export default {
   data() {
@@ -140,7 +149,13 @@ export default {
           { min: 1, max: 40, message: '长度在 1 到 40 个字符', trigger: 'blur' }
         ]
       },
-      editVisible: false
+      editVisible: false,
+      treeVisible: false,
+      tree: [],
+      treeProps: {
+        label: 'name',
+        children: 'children'
+      }
     }
   },
   computed: {
@@ -152,6 +167,17 @@ export default {
     this.pageSize = this.defaultPageSize
   },
   methods: {
+    async treeShow() {
+      const { success, data } = await fetch({
+        url: '/page',
+        method: 'get',
+        params: { limit: 0, offset: 0 }
+      })
+      if (success) {
+        this.tree = list2tree(data.rows)
+      }
+      this.treeVisible = true
+    },
     searchSubmit() {
       this.handlePageChange()
     },

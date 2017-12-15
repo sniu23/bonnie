@@ -1,15 +1,14 @@
 <template>
 <section>
-  <el-form :model="search" ref="search" class="search" label-width="80px" inline>
-    <br/>
-    <el-form-item label="代码" prop="code">
-      <el-input v-model="search.code"></el-input>
+  <el-form :model="search" ref="search" class="search" label-width="0px" inline>
+    <el-form-item prop="code">
+      <el-input v-model="search.code" placeholder="代码"></el-input>
     </el-form-item>
-    <el-form-item label="名字" prop="name">
-      <el-input v-model="search.name"></el-input>
+    <el-form-item prop="name">
+      <el-input v-model="search.name" placeholder="名字"></el-input>
     </el-form-item>
-    <el-form-item label="有效否" prop="valid">
-      <el-select v-model="search.valid" placeholder="请选择">
+    <el-form-item prop="valid">
+      <el-select v-model="search.valid" placeholder="有效否">
         <el-option label="是" :value="true"/>
         <el-option label="否" :value="false"/>
       </el-select>
